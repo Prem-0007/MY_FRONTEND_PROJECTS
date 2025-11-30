@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Flip Card</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+        z-index: -2;
+    }
+    .scene {
+        perspective: 1000px;
+    }
+
+    .card {
+        width: 220px;
+        height: 320px;
+        border-radius: 20px;
+        transform-style: preserve-3d;
+        position: relative;
+        transition: transform 0.8s ease;
+        cursor: pointer;
+        box-shadow: 0 0 20px black;
+    }
+
+    .card:hover {
+        transform: rotateY(180deg);
+    }
+
+    .card_face {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        font-size: 40px;
+        font-weight: 600;
+        color: black;
+        border-radius: 20px;
+        backface-visibility: hidden;
+        box-shadow: 0 0 20px black;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+        backdrop-filter: blur(8px) saturate(180%);
+    }
+
+    .card_back {
+        transform: rotateY(180deg);
+        font-size: 20px;
+        font-weight: 900;
+        text-align: center;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    img {
+        width: 120px;
+        height: 125px;
+        border: 6px solid black;
+        border-radius: 50%;
+        margin-bottom: 20px;
+        box-shadow: 0 0 20px black;
+    }
+
+    span {
+        font-weight: 900;
+        margin-top: 10px;
+    }
+
+</style>
+</head>
+    <body onload="addEvent()">
+
+    <audio id="audio" src="https://www.dropbox.com/scl/fi/yfvd7xezrpbpr9gi8m8ac/the-neighbourhood-sweater-weather-official-video_jOBZhjaV.mp3?rlkey=k1mr34chlv16niao0mpn310nw&st=mmmmmvg6&raw=1"></audio>
+    <div class="scene">
+        <div class="card">
+            <div class="card_face card_front">
+                <img src='https://i.postimg.cc/5jcx2nzQ/IMG-20250709-WA0015.jpg' alt='Prem'/>
+                <span>PREM</span>
+            </div>
+            <div class="card_face card_back">
+                Frontend Dev 🚀<br><br>
+UI/UX Lover 🎨<br><br>
+Always Learning 📚
+            </div>
+        </div>
+    </div>
+
+    <iframe src="https://my.spline.design/abstractgradientbackground-7b0WO5lNRuo3cuV4JAXyw6r2/" frameborder="0"></iframe>
+ <script>
+    function addEvent(){
+         document.body.addEventListener("click", play)
+       }
+      function play() {
+        var audio = document.getElementById ("audio");
+        audio.play();
+      }</script></body>
+</html>

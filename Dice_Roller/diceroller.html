@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dice Roller Program</title>
+    <link rel="stylesheet" href="diceroller.css">
+    <style>
+      #container{
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    text-align: center;
+    font-size: 2rem;
+}
+h1{
+  text-shadow: 0 0 7px black, 0 0 4px violet;
+ font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+button{
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 1.4em;
+    border-radius: 10px;
+    padding:10px 15px;
+    border:none;
+    font-weight: bold;
+    cursor:pointer;
+    background-color: rgb(124, 124, 242);
+    color:white;
+transition: all 0.3s;
+ text-shadow: 0 0 10px rgb(0, 0, 0);
+}
+button:hover{
+    background-color: rgb(43, 43, 220);
+    color: black;
+    text-shadow: 0 0 10px rgb(255, 255, 255);
+}
+button:active{
+    background-color: rgb(0, 0, 255);
+    color: rgb(255, 255, 255);
+}
+input{
+   font-size: 2rem; 
+   width:250px;
+   text-align: center;
+   font-weight: bold;
+}
+#diceResult{
+    margin: 25px;
+}
+#diceImages img{
+    width:150px;
+    margin:5px;
+    
+}
+    </style>
+</head>
+<body>
+<div id="container">
+    <h1>Dice Roller</h1>
+    <label>Number of dice:</label>
+    <input type ="number" id="numOfDice" value="1" min="1" >
+    <button onclick="rollDice()">Roll Dice</button>
+    <div id="diceResult"></div>
+     <div id="diceImages"></div>
+</div>
+<script src="diceroller.js"></script>
+</body>
+</html>

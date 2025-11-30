@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Poppins:wght@400;500;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+</head>
+    <style>
+        body{
+       display:flex;
+       justify-content: center;
+       align-items: center;
+       height:100vh;
+       background:rgb(208, 208, 223);
+       margin:0;
+       padding:0;
+          
+        }
+        .whole{ 
+          perspective: 700px;
+          transform-style: preserve-3d;
+          z-index: 1;
+          position: relative;
+          display:flex;
+          justify-content: center;
+          align-items: center;
+          
+        }
+          
+        .Welcome {
+  width: 1200px;
+  height: 600px;  
+  position: absolute;
+  background-color: transparent;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 12px;
+  box-shadow: 0 0px 30px rgba(255, 254, 254, 0.9),0 0 40px black;
+
+  backdrop-filter: blur(5px);
+}
+        div>h1{
+   position: absolute;  
+   font-family:montserrat;
+    top:175px;
+    left:40px;
+    color:white;
+    letter-spacing: 1px;
+    font-size: 55px;
+    line-height: 1;
+    text-shadow: 0 0 15px rgb(255, 255, 255);
+    font-weight: bold;
+        }
+ .Welcome>.matter>h2{
+  font-family: roboto;
+   color:rgb(243, 103, 103);
+   position: absolute;
+   top:285px;
+   left:44px;
+   font-weight: bold;
+   font-size: 32px;
+   text-shadow: 0 0 10px red;
+        }
+ .video {
+   position: fixed;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   top: 0;
+   left: 0;
+   width: 100vw;
+   height: 100vh;
+   object-fit: cover; 
+   z-index: -1;   
+   filter:contrast(180%);   
+              }
+ .smicons {
+  display: flex;
+  gap: 35px;
+  font-size: 40px;
+  position: relative;
+  top:500px;
+  left:60px;
+              }
+    .smicons a {
+      color: #333;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+    .fa-linkedin{
+      background-color:#007bb5;
+      color:white;
+      box-shadow: 0 0 30px #007bb5;
+    }
+    .fa-facebook{
+      color:#1877f2;
+filter: drop-shadow( 0 0 30px #006cfa);
+    }
+.fa-instagram {
+  background: radial-gradient(circle at 30% 107%, 
+      #fdf497 0%, #fdf497 5%, 
+      #fd5949 45%, #d6249f 60%, #285AEB 90%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+        filter:drop-shadow(0 0 30px red, 0 0 30px yellow);
+}
+    .fa-twitter{
+      color:#1da1f2;
+      filter:drop-shadow(0 0 30px #1da1f2);
+    }
+    .fa-youtube{
+      color:red;
+      filter:drop-shadow(0 0 30px red);
+    }
+   form{
+   width:470px;
+   height:550px;
+   position: relative;
+   right:-90px;
+   top:0px;
+   box-shadow: 0 0 30px rgb(142, 142, 142);
+   border-radius: 15px;
+          }
+   .heads{
+    position: absolute;
+    color:white;
+    font-family: poppins;
+    top:15%;
+    left:50%;
+    transform: translate(-50%,-50%);
+    font-size: 45px;
+    font-weight: bold;
+    text-shadow: 0 0 04px white;
+            }
+   .inputs{
+    font-family: poppins;
+    display: flex;
+    flex-direction: column;
+    gap:25px;
+    width:300px;
+    position:relative;
+    top:160px;
+    left:90px;
+    backdrop-filter: blur(30px);
+              }
+input{
+    font-family:poppins;
+    color:white;
+    font-size: 18px;
+    background-color:rgba(255, 254, 254, 0.1);
+    padding:10px 8px;
+    border:none;
+    border-bottom:3px solid white;
+    position: relative;
+    caret-color: white;
+   backdrop-filter:blur(8px) ;
+              }
+  
+   
+ input:focus{
+     outline:none;
+    box-shadow: 0 0 10px rgb(0, 0, 0);
+ }
+
+
+.inputs label {
+  position: absolute;
+  left:10px;
+  top: 10px;
+  color: white;
+  font-size: 25px;
+  pointer-events: none;
+  transition: 0.3s ease all;
+}
+.inputs input:focus +label, input:not(:placeholder-shown)+ label{
+  top:-20px;
+  left:-15px;
+}
+.inputs > .fas{
+  font-size: 22px;
+  color:white;
+  position: relative;
+  left:260px;
+  top:-60px;
+}
+.Remember > label{
+ display: flex;
+ align-items: center;
+  gap:8px;
+  font-size: 18px;
+  color:white;
+  font-family: poppins;
+  position:relative;
+  top:165px;
+  left:45px;
+}
+input[type="checkbox"]{
+  position: relative;
+  width:20px;
+  height:20px;
+}
+
+.forgot{
+  font-family: roboto;
+  position: relative;
+  font-size: 18px;
+  text-decoration: none;
+  color:rgb(137, 130, 153);
+  left:275px;
+  top:142px;
+  font-weight: 900;
+}
+.forgot:hover{
+  color:rgb(252, 252, 130);
+}
+.forgot:active, .forgot:focus{
+color:red;
+}
+.button{
+  position: relative;
+}
+.button >.submit{
+  text-align: center;
+  position:absolute;
+  top:170px;
+  left:60px;
+  border:none;
+  background:transparent;
+  backdrop-filter: blur(10px);
+  width:350px;
+  height:50px;
+  border-radius: 25px;
+  font-size:30px;
+  color:white;
+  font-weight: bold;
+  font-family: roboto;
+  text-shadow: 0 0 15px white;
+  box-shadow: 0 0 30px black, 0 0 30px white;
+}
+.button > .submit:hover{
+ background:linear-gradient(145deg, blue,violet, rgb(6, 243, 255));
+ color:rgb(0, 0, 0);
+ text-shadow: 0 0 20px black;
+ box-shadow: 0 0 30px violet,0 0 30px cyan;
+}
+.button > .submit:active, .button > .submmit:focus{
+ background:linear-gradient(145deg,yellow,red);
+ color:rgb(255, 255, 255);
+ text-shadow: 0 0 20px white;
+box-shadow: 0 0 30px yellow,0 0 30px blue;
+}
+.acc{
+  color:white;
+  font-size: 20px;
+  position: absolute;
+  top:480px;
+  left:90px;
+}
+.acc > .Register{
+  color:rgb(137, 130, 153);
+  text-decoration: none;
+  font-family: poppins;
+  word-spacing: 1px;
+}
+.Register:hover{
+  color:rgb(252, 252, 130);
+}
+.Register:active, .Register:focus{
+color:red;
+}
+.nav{
+  position: relative;
+  top:-230px;
+   font-family: montserrat;
+   left:-90px;
+   height:70px;
+
+}
+ul{
+  list-style-type: none;
+  overflow: hidden;
+background: transparent;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 0 20px black, 0 0 20px white;
+   margin:0;
+   padding:0;
+   display:flex;
+   gap:30px;
+}
+ul li a {
+    display:block;
+    padding:15px 18px;
+   text-align: center;
+  font-size: 16px;
+  background: transparent;
+  backdrop-filter: blur(5px);
+  text-decoration: none;
+  color:rgb(255, 255, 255);
+  text-align: center;
+  background-color: rgba(255, 255, 255,0.1);
+  backdrop-filter: blur(5px);
+  transition:all 0.3s ease;
+ text-shadow: 0 0 10px white;
+}
+ul li a:hover{
+  background: linear-gradient(110deg, violet,rgb(191, 0, 255),rgb(255, 0, 119));
+  color:black;
+  text-shadow: 0 0 10px black;
+}
+ul li a:active{
+  background: linear-gradient(110deg, yellow,orange,rgb(255, 0, 119));
+  color:white;
+  text-shadow: 0 0 10px white;
+}
+    </style>
+
+</head>
+<body>
+  <video autoplay muted loop class="video">
+    <source src="https://www.dropbox.com/scl/fi/7nq93sxkdf28ctdo205wl/pexels-media-4182916.mp4?rlkey=qkxk64gnd5womiyrs7cfkatgx&st=quiembpm&raw=1"
+            type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+ 
+  <div class="whole">
+   
+<div class="Welcome"><h1>Welcome </h1>
+    <div class="matter"><h2>Let's explore new possibilities together.<br>Sign in to continue your journey.</h2></div>
+
+  <div class="smicons">
+    <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook"></i></a>
+    <a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
+    <a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
+    <a href="https://linkedin.com" target="_blank"><i class="fab fa-linkedin"></i></a>
+    <a href="https://youtube.com" target="_blank"><i class="fab fa-youtube"></i></a>
+  </div>
+
+    </div>
+    <div class="nav">
+      <ul>
+      <li><a class="navs" href="#home">Home</a></li>
+       <li><a class="navs" href="#about">About</a></li>
+          <li><a class="navs" href="#services">Services</a>
+           </li>
+              <li><a class="navs" href="#contact">Contact</a></li>
+              </ul>
+    </div>
+    <form>
+      <div class="heads">Sign in</div>
+        <div class="inputs">
+          
+         <input type ="text" id ="name" name="name" placeholder=" " required ><label for="name">Username</label> <i class="fas fa-user icon"></i>
+        </div><div class="inputs">
+                    
+          <input type ="password" id ="password" name="password" placeholder=" "  required>
+          <label for="password">Password</label>
+           <i class="fas fa-lock icon"></i>
+         </div>
+          <div class="Remember">
+             
+            <label for="remember">
+              <input type ="checkbox"class="check" id ="remember" name="remember" Value="Remember me"required ><span class="checkmark"></span> Remember me
+            </label>
+        
+        </div>
+        <a class="forgot" href="#">Forgot Password ?</a>
+       
+        <div class="acc">Don't have an account?<a class="Register" href="#">&nbsp&nbspRegister</a></div><div class="button"> <button type="submit" class="submit">Login</button></div>
+           
+    </form>
+    
+</div>
+    </div>
+</body>
+</html>

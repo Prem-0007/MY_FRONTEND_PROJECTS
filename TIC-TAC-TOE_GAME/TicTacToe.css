@@ -1,0 +1,78 @@
+body{
+   background-color: chocolate;
+}
+h1{
+ color:rgb(0, 0, 0);
+text-shadow: 2px 2px 5px rgb(0, 0, 0);
+font-size:55px;
+ font-weight:bold;
+ margin:30px;
+    text-align:center;
+  font-family: Arial, Helvetica, sans-serif;
+}
+#game{
+    display: flex;
+  justify-content: center;
+}
+#boxes{
+    display:grid;
+    grid-template-columns: repeat(3, 100px);
+    gap:10px;
+    padding:20px;
+}
+
+.grid{
+    font-size: 3rem;
+    font-weight: bold;
+    width:90px;
+    height:90px;
+    border-radius:15px;
+    color:rgb(255, 0, 0);
+    background:#000000;
+    cursor: pointer;
+    border:none;
+     background: linear-gradient(145deg, #1c1c1c, #292929);
+box-shadow: inset 7px 7px 10px #000000,inset -7px -7px 30px #000000 ;
+}
+.grid:hover{
+    color:rgb(250, 21, 70); 
+background: linear-gradient(145deg, #3c3c3c, #000000);
+box-shadow:  7px 7px 20px #000000,
+             -7px -7px 20px #000000;
+
+}
+#reset, #new{
+     border:none;
+    background-color: rgb(53, 53, 55);
+    padding:10px 20px;
+    font-size: 1.5rem;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight:bold ;
+ display:block;
+ margin:20px auto;
+ border-radius: 10px;
+background: linear-gradient(145deg, #666565, #676767);
+box-shadow:  7px 7px 7px #000000,
+             -5px -5px 15px #6d6b6b;
+text-shadow: 0 2px 5px black;}
+#reset:hover, #new:hover{
+  color:white;
+             background: linear-gradient(145deg, #000000, #000000);
+box-shadow: inset 7px 7px 10px #111010,inset -7px -7px 30px #121010 ;
+text-shadow: 0 2px 5px rgb(255, 255, 255);
+}
+
+#display{
+    color:rgb(0, 0, 0);
+    font-size: 45px;
+    height:20px;
+    text-align: center;
+    font-weight: bold;
+    margin-top: 0px;
+    margin-bottom: 80px;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+   text-shadow: 0 3px 5px black;
+}
+#new{
+    margin-top:30px;
+}
