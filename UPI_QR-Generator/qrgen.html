@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+    <title>UPI QR-GENERATOR</title>
+    <style>
+  body {
+            margin: 0;
+            padding: 0;
+            background-color: rgb(0, 0, 0);
+            display: flex;
+            justify-content: center;
+        }
+.video {
+   position: fixed;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   top: 0;
+   left: 0;
+   width: 100vw;
+   height: 100vh;
+   object-fit: cover; 
+   z-index: -1;   
+   opacity:0.5 ;
+   filter:contrast(180%);   
+              }
+        .outer {
+            background-color: rgba(255, 255, 255, 0.1);
+            max-width: 500px;
+            height: 660px;
+            margin: 40px;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgb(255, 255, 255);
+            backdrop-filter: blur(12px);
+        }
+        form {
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+        }
+        h1 {
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            margin: 30px;
+            font-family: poppins;
+            font-weight: bold;
+            text-shadow: 0 0 10px black;
+            font-size: 33px;
+            color: white;
+            text-shadow: 0 0 15px black;
+        }
+
+        .inputs {
+            margin-top: 15px;
+            position: relative;
+            margin-bottom: 25px;
+        }
+        .inputs input {
+            width: 100%;
+            padding: 12px 10px;
+            font-size: 16px;
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-bottom: 2px solid white;
+            outline: none;
+            font-family: montserrat;
+            text-shadow: 0 0 20px black;
+        }
+
+        .inputs label {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            font-size: 16px;
+            color: white;
+            pointer-events: none;
+            transition: 0.3s;
+        }
+
+        .inputs input:focus+label,
+        .inputs input:not(:placeholder-shown)+label {
+            top: -12px;
+            font-size: 12px;
+            color: #f0f0f0;
+        }
+
+        form {
+            text-align: center;
+        }
+        .button{
+ 
+            margin-top: 70px;
+}
+.button >.submit{
+  text-align: center;
+  border:none;
+  background:transparent;
+  backdrop-filter: blur(10px);
+  width:350px;
+  height:50px;
+  border-radius: 25px;
+  font-size:28px;
+  color:white;
+  font-weight: bold;
+  font-family:poppins;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-shadow: 0 0 15px rgb(0, 0, 0);
+  box-shadow: 0 0 30px black, 0 0 30px white;
+}
+.button > .submit:hover{
+ background:linear-gradient(145deg, blue,violet, rgb(6, 243, 255));
+ color:rgb(0, 0, 0);
+ text-shadow: 0 0 20px black;
+ box-shadow: 0 0 30px violet,0 0 30px cyan;
+}
+.button > .submit:active, .button > .submmit:focus{
+ background:linear-gradient(145deg,yellow,red);
+ color:rgb(255, 255, 255);
+ text-shadow: 0 0 20px white;
+box-shadow: 0 0 30px yellow,0 0 30px blue;
+}
+#qrcode{
+    margin-top: 35px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    filter: drop-shadow(0 0 10px rgb(0, 0, 0));
+}
+    </style>
+</head>
+<body>
+<video autoplay muted loop class="video">
+    <source src="https://www.dropbox.com/scl/fi/xzkjqemc4egzpuu84r64g/uhd_30fps.mp4?rlkey=xla62ugdr5mb2yo24c1qw1q6r&st=acwz50mf&raw=1"
+            type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+    <div class="outer">
+        <h1>QR Code Generator</h1>
+        <form method="post">
+            <div class="whole">
+               <div class="inputs">
+    <input type="password" id="upiId" name="upiId" placeholder=" " required>
+    <label for="upiId">Your UPI-Id</label>
+</div>
+<div class="button">
+    <button type="button" class="submit" onclick="generateQR()">Generate QR</button>
+</div>
+<div id="qrcode"></div>
+<h2 id="pay" style="color:white; display:none; text-shadow: 0 0 10px black; font-family: poppins; font-weight: bold;">Scan to Pay</h2>
+</form>
+</div>
+<script>
+function generateQR() {
+    const upi = document.getElementById("upiId").value.trim();
+    if(!upi) return alert("Enter UPI ID");
+
+    document.getElementById("qrcode").innerHTML = "";
+const upiLink = `upi://pay?pa=${upi}&pn=Recipient&cu=INR`;
+
+new QRCode(document.getElementById("qrcode"), {
+        text: upiLink,
+        width: 200,
+        height: 200,
+    });
+    document.getElementById("pay").style.display = "block";
+}
+</script>
+</body>
+</html>
+
+
+
+
+   
+
+
