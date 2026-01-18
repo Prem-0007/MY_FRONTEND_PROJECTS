@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bot's Code Editor</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+* {
+   box-sizing: border-box; 
+  }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url("https://i.postimg.cc/xCLMDR5L/rural-area-on-autumn-equinox-600nw-2667975711.webp");
+  background-size: cover;
+  background-position: center;
+  font-family: Poppins, sans-serif;
+}
+
+.editor-box {
+  width: 95%;
+  max-width: 1100px;
+  height: 90vh;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(15px);
+  border-radius: 16px;
+  box-shadow: 0 0 25px black;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+h1 {
+  text-align: center;
+  color: rgba(0, 0, 0, 0.722);
+  margin-bottom: 10px;
+  font-weight: bold;
+  font-size: 40px;
+  text-shadow: 0 0 10px black;
+}
+h2 {
+  color: rgb(0, 0, 0);
+  margin:5px;
+  text-shadow: 0 0 25px black;
+  font-size: 20px;
+  font-weight: bold;
+}
+.editor {
+  flex: 1;
+  display: flex;
+  gap: 12px;
+}
+
+textarea {
+  width: 50%;
+  padding: 15px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  border: none;
+  outline: none;
+  resize: none;
+  font-family: Consolas, monospace;
+  font-size: 14px;
+  border-radius: 12px;
+}
+
+iframe {
+  width: 50%;
+  border: none;
+  background: white;
+  border-radius: 12px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+
+.button {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+
+
+        button {
+            position: relative;
+            border: none;
+            background: black;
+            color: white;
+            border-radius: 20px;
+            padding: 16px;
+            font-family: poppins;
+            position: relative;
+            z-index: 3;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 230px;
+            margin: 10px auto 0;
+            padding: 14px 25px;
+            font-size: 20px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
+            box-shadow: 0 0 35px black, 0 0 15px black inset;
+            margin-bottom: 10px;
+        }
+
+        button::before {
+            position: absolute;
+            content: "";
+            width: 100%;
+            height: 80%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: -5;
+            animation: spin 3s linear infinite;
+            background: linear-gradient(140deg, red, blue, green, yellow, red, blue, green, yellow);
+        }
+
+        @keyframes spin {
+            to {
+                rotate: 360deg;
+            }
+        }
+
+        @keyframes reverseSpin {
+            to {
+                rotate: -360deg;
+            }
+        }
+        button::after {
+            position: absolute;
+            content: "";
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            inset: 4px;
+            background: black;
+            z-index: -3;
+            border-radius: 20px;
+        }
+        #button-down::before{
+  animation:reverseSpin 3s linear infinite;
+}
+.editor-headings {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 15px;
+  margin-bottom: 6px;
+}
+
+.code-title,
+.output-title {
+  color: rgb(0, 0, 0);
+  font-size: 20px;
+  font-weight: bold;
+  text-shadow: 0 0 15px black;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.editor-headings i {
+  font-size: 20px;
+  filter: drop-shadow(0 0 6px black);
+}
+
+@media (max-width: 768px) {
+
+
+  .editor { flex-direction: column; }
+  textarea, iframe { width: 100%; height: 45%; }
+
+
+  .editor-headings {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .code-title {
+    align-self: flex-start;
+  }
+
+  .output-title {
+    align-self: flex-start;
+    margin-top: 8px;
+    display: none;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="editor-box">
+  <h1>Bot's Code Editor</h1>
+ 
+   <div class="editor-headings">
+  <h2 class="code-title">
+    <i class="fa-solid fa-code"></i>
+    Code
+  </h2>
+
+  <h2 class="output-title">
+    <i class="fa-solid fa-eye"></i>
+    Output
+  </h2>
+</div>
+
+  <div class="editor">
+  
+<textarea id="code">
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  background: #ffffff;
+  font-family: poppins, sans-serif;
+  text-align: center;
+   }
+h1 {
+  color: rgb(0, 0, 0);
+  text-shadow: 0 0 3px #FF0000, 0 0 5px #0000FF;
+  font-size: 50px;
+  font-weight: bold;
+   }
+button {
+  background-color:black;
+  color: rgb(255, 0, 0);
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 25px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border:2px solid rgb(197, 129, 129);
+  outline: none;
+  font-family: poppins, sans-serif;
+  text-shadow: 0 0 3px #FF0000, 0 0 5px #0000FF;
+  border-radius: 17px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Hello World</h1>
+
+<button onclick="sayBot()">Click Here</button>
+
+<script>
+function sayBot() {
+  alert("HELLO BOT !!!");
+}
+</script>
+
+</body>
+</html>
+
+</textarea>
+
+<iframe id="preview"></iframe>
+
+  </div>
+
+  <div class="buttons">
+    <button  class ="button" onclick="runCode()">RUN</button>
+    <button class ="button"  id="button-down" onclick="downloadCode()">DOWNLOAD</button>
+  </div>
+</div>
+
+<script>
+function cleanHTML(code) {
+  if (!code) return "";
+
+  
+  code = code.replace(
+    /<!--\s*Code injected by live-server\s*-->[\s\S]*?<\/script>/gi,
+    ""
+  );
+
+
+  if (!/<!doctype html>/i.test(code)) {
+    code = "<!DOCTYPE html>\n" + code;
+  }
+
+  return code.trim();
+}
+
+function runCode() {
+  const editor = document.getElementById("code");
+  const preview = document.getElementById("preview");
+
+  const clean = cleanHTML(editor.value);
+  editor.value = clean;        
+  preview.srcdoc = clean;      
+}
+
+function downloadCode() {
+  const clean = cleanHTML(
+    document.getElementById("code").value
+  );
+
+  const bob = new Blob([clean], { type: "text/html" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(bob);
+  a.download = "index.html";
+  a.click();
+}
+
+window.onload = runCode;
+</script>
+</body>
+</html>
