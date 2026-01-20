@@ -77,13 +77,7 @@ body{
     border-radius: 30px;
   }
 
-  #display {
-    font-size: 3.2rem !important;
-    padding: 8px;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-
+  
   #controls {
     width: 100%;
     display: flex;
@@ -96,5 +90,19 @@ body{
     font-size: 1.3rem;
     padding: 12px;
     margin: 0;
+  }
+}
+@media (max-width: 600px) {
+  #display {
+    font-size: 3.2rem !important;
+    padding: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 380px) {
+  #display {
+    font-size: 2.6rem !important;
   }
 }
