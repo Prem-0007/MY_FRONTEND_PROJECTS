@@ -32,7 +32,7 @@ grids.forEach(grid => {
 });
 
 const displayWinner = (winner) => {
-    display.innerText = `Winner is ${winner} , Congratulations 🎉`;
+    display.innerText = `Winner is ${winner} , Congratulations `;
           displayResult.style.display = "block";
 };
 const gameWinner = () => {
