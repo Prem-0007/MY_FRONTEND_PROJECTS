@@ -78,7 +78,7 @@ body{
   }
 
   #display {
-    font-size: 3.2rem;
+    font-size: 3.2rem !important;
     padding: 8px;
     margin-bottom: 20px;
     text-align: center;
