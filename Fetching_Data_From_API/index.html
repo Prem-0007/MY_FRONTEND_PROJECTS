@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetching Data From API</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: rgb(214, 208, 208);
+  font-family: Poppins, Arial, sans-serif;
+}
+
+#pokemonName {
+  font-size: 1.2rem;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 12px;
+  outline: none;
+  box-shadow: 6px 6px 12px #bababa,
+              -6px -6px 12px #ffffff;
+}
+
+#pokemonName:focus {
+  box-shadow: inset 4px 4px 10px #bababa,
+              inset -4px -4px 10px #ffffff;
+}
+
+button {
+  font-size: 1.4rem;
+  font-weight: bold;
+  padding: 12px 30px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  color: white;
+  text-shadow: 0 0 10px white;
+  background: linear-gradient(145deg, #04b304, #04d504);
+  box-shadow: 14px 14px 25px #026f02,
+              -7px -7px 30px #06ff06;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  box-shadow: inset 14px 14px 40px #026f02,
+              inset -7px -7px 50px #06ff06;
+  color: black;
+  text-shadow: 0 0 10px black;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+#pokemonSprite {
+  margin-top: 30px;
+  width: 180px;
+}
+@media (max-width: 600px) {
+  button {
+    width: 100%;
+    font-size: 1.2rem;
+  }
+
+  #pokemonName {
+    width: 100%;
+    font-size: 1.1rem;
+  }
+}
+</style>
+</head>
+<body>
+    <input type ="text" id="pokemonName" placeholder="Enter Pokemon name">
+    <button onclick ="fetchData()">Fetch Pokemon</button><br>
+
+    <img src="" alt="pokemonSprite" id="pokemonSprite" style="display:none">
+    <script src="script.js"></script>
+</body>
+</html>

@@ -59,3 +59,50 @@ body{
 #resetBtn:hover{
     background-color:rgb(2, 70, 97);
 }
+@media (max-width: 600px) {
+
+  body {
+    padding: 15px;
+  }
+
+  #myH1 {
+    font-size: 2.4rem;
+    padding: 15px;
+    text-align: center;
+  }
+
+  #container {
+    width: 100%;
+    padding: 25px 15px;
+    border-radius: 30px;
+  }
+
+  
+  #controls {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  #controls button {
+    width: 100%;
+    font-size: 1.3rem;
+    padding: 12px;
+    margin: 0;
+  }
+}
+@media (max-width: 600px) {
+  #display {
+    font-size: 3.2rem !important;
+    padding: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 380px) {
+  #display {
+    font-size: 2.6rem !important;
+  }
+}
