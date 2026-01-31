@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>pata nahi kya he ye </title>
+
+    <style>
+        ::-webkit-scrollbar {
+  width: 0.625rem;
+  height: 0.625rem;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #111;
+  border-radius: 0.3125rem;
+  box-shadow: inset 0.125rem 0.125rem 0.125rem rgba(255, 255, 255, 0.25),
+    inset -0.125rem -0.125rem 0.125rem rgba(0, 0, 0, 0.25);
+  cursor: default;
+}
+
+::-webkit-scrollbar-track {
+  background: #333;
+}
+
+::selection {
+  background: #fff;
+  color: #333;
+}
+
+html,
+body {
+  height: 100vh;
+  height: 100dvh;
+  margin: 0;
+  overflow: hidden;
+}
+
+body {
+  display: grid;
+  grid-template-rows: calc(100dvh - 4rem) 4rem;
+  font-family: system-ui, sans-serif;
+}
+
+canvas,
+.editor,
+#controls {
+  grid-row: 1;
+  grid-column: 1;
+}
+
+canvas {
+  --canvas-z-index: -1;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  background: black;
+  touch-action: none;
+  z-index: var(--canvas-z-index);
+}
+
+.editor,
+.overlay,
+#error {
+  font-family: 'Courier New', Courier, monospace;
+  background: repeating-linear-gradient(0deg, #000a, #1119, #000a .25rem);
+  padding: 1em;
+}
+
+.editor {
+  color: #fefefe;
+  tab-size: 2;
+  border: none;
+  resize: none;
+}
+
+.editor:focus {
+  outline: none;
+}
+
+#error {
+  grid-row: 2;
+  grid-column: 1;
+  margin: 0;
+  padding-block: 0;
+  padding-top: .5em;
+  color: firebrick;
+  overflow: auto;
+  text-wrap: pretty;
+}
+
+#indicator {
+  visibility: hidden;
+  position: absolute;
+  top: calc(var(--top, 0px) - var(--scroll-top, 0px));
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 10px solid firebrick;
+  transform: translateY(-25%);
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+}
+
+.editor,
+.overlay {
+  font-size: 1rem;
+  line-height: 1.2;
+  white-space: pre;
+}
+
+#controls {
+  position: fixed;
+  top: 1em;
+  right: 2em;
+}
+
+.controls {
+  position: relative;
+  display: flex;
+  gap: 1.5em;
+  padding: .5em 1.25em;
+  background: #1111;
+  border-radius: 4px;
+}
+
+.controls::before,
+.controls::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  transform: scale(.95);
+  border-radius: inherit;
+  opacity: 0;
+}
+
+.controls::before {
+  background: #aef;
+  animation: pulse 2s infinite;
+}
+
+.controls::after {
+  background: #fefefe66;
+  transition: transform 200ms ease-in-out;
+}
+
+.controls:hover::before,
+.controls:hover::after {
+  opacity: 1;
+}
+
+.controls:hover::before {
+  transform: scale(.98);
+  filter: blur(2px);
+}
+
+.controls:hover::after {
+  transform: scale(1.025, 1.1);
+}
+
+.controls:hover {
+  background: #111f;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.0125);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.hidden {
+  display: none !important;
+}
+
+.opaque {
+  opacity: 1 !important;
+  background: #111 !important;
+}
+
+input {
+  all: unset;
+  opacity: .2;
+  filter: saturate(0) invert(1);
+  cursor: pointer;
+  transition: opacity 200ms ease-in-out;
+  padding: .25em .5em;
+}
+
+input:hover {
+  opacity: 1;
+}
+
+.icon {
+  text-align: center;
+  line-height: 1;
+}
+
+#btnToggleView {
+  width: 1.25em;
+}
+
+#btnToggleView::after {
+  content: '👁';
+}
+
+#btnToggleView:checked::after {
+  content: '✏️';
+}
+
+#btnToggleResolution::after {
+  content: '1️⃣';
+}
+
+#btnToggleResolution:checked::after {
+  content: '2️⃣';
+}
+
+#btnReset::after {
+  content: '⏮️';
+}
+    </style>
+</head>
+<body>
+
+    <canvas id="canvas"></canvas>
+<textarea id="codeEditor" class="editor" spellcheck="false" autocorrect="off" autocapitalize="off" translate="no" oninput="render()"></textarea>
+<pre id="error"></pre>
+<div id="indicator"></div>
+<div id="controls">
+  <div class="controls">
+    <input id="btnToggleView" class="icon" type="checkbox" name="toggleView" onclick="toggleView()">
+    <input id="btnToggleResolution" class="icon" type="checkbox" name="toggleResolution" onchange="toggleResolution()">
+    <input id="btnReset" class="icon" type="checkbox" name="reset" onclick="reset()">
+  </div>
+</div>
+<script type="x-shader/x-fragment">#version 300 es
+/*********
+* made by Matthias Hurrle (@atzedent)
+*/
+precision highp float;
+out vec4 O;
+uniform float time;
+uniform vec2 resolution;
+#define FC gl_FragCoord.xy
+#define R resolution
+#define T time
+#define S smoothstep
+#define N normalize
+#define MN min(R.x,R.y)
+#define TAU radians(360.)
+#define ESN (PI/2.)
+#define PI (TAU/2.)
+#define rot(a) mat2(cos((a)-vec4(0,11,33,0)))
+#define lerps(a,b,k) (a*sin(k)+b*(1.-sin(k)))
+#define lerpc(a,b,k) (a*cos(k)+b*(1.-cos(k)))
+vec3 smin(vec3 a, vec3 b, float k) {
+  vec3 h=clamp(.5+.5*(b-a)/k,.0,1.);
+  return mix(b,a,h)-k*h*(1.-h);
+}
+vec3 palette(float k) {
+  vec3
+  a=vec3(.75,.5,.5),
+  b=vec3(.5,.5,.75),
+  c=vec3(1,1.1,1),
+  d=vec3(0,0,1);
+  return a+b*cos(PI*(c*k+d));
+}
+float box(vec2 p, vec2 e, float r) {
+  e=vec2(.5)-e*.5;
+  vec2 aa=vec2(r*.5),
+  uv=S(e,e+aa,p);
+  uv*=S(e+aa,e,p);
+  return uv.x*uv.y;
+}
+vec3 pattern(vec2 p, float t) {
+  float a=ESN, n=.25;
+  p.xy*=rot(TAU*exp(cos(t*.05)));
+  p=mod(vec2(log(length(p))-t,atan(p.y,p.x)/TAU*6.),1.)-.5;
+  p*=rot(ceil(box(p,vec2(.5),1.)/a+.5)*a);
+  p=p.y<.0?-p:p;
+  a=abs(p.x+p.y-n);
+  a=a>n?abs(p.x-p.y+n):a;
+  vec3 col=vec3(0);
+  col+=a<.125-.1*(cos(-t*.3)*.5+.5)?dot(p-p+1.,N(vec2(-a))):.5;
+  float v=exp(-a*7.5);
+  col=min(col,vec3(.5+v/fwidth(v)));
+  return S(.5,.0,smin(col,-vec3(1),-.5));
+}
+void main(void) {
+  vec3 col=vec3(0);
+  vec2 uv=(FC-.5*R)/MN;
+  col+=pattern(uv,T);
+  col+=palette(length(uv)-T*.5);
+  float d=5e-3*dot(
+    log(length(uv))-(lerps(.0,1.,-T*.5)*1e2+1e2),
+    atan(abs(uv.x),abs(uv.y))/TAU*6.
+  )-(sin(T*.5)*.5+.5)*2.,
+  e=length(uv)-(sin(T*.5)*2.+2.);
+  d=mix(d,e,pow(S(.0,1.,sin(T*.2)*.5+.5),.75));
+  d=sin(d*dot(col,col))-.05;
+  d=abs(d);
+  d=pow(.03/d,.75);
+  d=max(.0,d);
+  col*=d;
+  col=tanh(col*col);
+  col=sqrt(col);
+  col=mix(vec3(0),col,min(pow(time,10.),1.));
+  O=vec4(col,1);
+}</script>
+
+    <script>
+        /*********
+ * made by Matthias Hurrle (@atzedent)
+ */
+let editMode = false // set to false to hide the code editor on load
+let resolution = 1 // set 1 for full resolution or to .5 to start with half resolution on load
+let renderDelay = 1000 // delay in ms before rendering the shader after a change
+let dpr = Math.max(1, resolution * window.devicePixelRatio)
+let frm, source, editor, store, renderer, pointers
+const shaderId = 'EpLQjzW'
+window.onload = init
+
+function resize() {
+  const { innerWidth: width, innerHeight: height } = window
+
+  canvas.width = width * dpr
+  canvas.height = height * dpr
+
+  if (renderer) {
+    renderer.updateScale(dpr)
+  }
+}
+function toggleView() {
+  editor.hidden = btnToggleView.checked
+  canvas.style.setProperty('--canvas-z-index', btnToggleView.checked ? 0 : -1)
+}
+function reset() {
+  let shader = source
+  editor.text = shader ? shader.textContent : renderer.defaultSource
+  store.putShaderSource(shaderId, editor.text)
+  renderThis()
+}
+function toggleResolution() {
+  resolution = btnToggleResolution.checked ? .5 : 1
+  dpr = Math.max(1, resolution * window.devicePixelRatio)
+  pointers.updateScale(dpr)
+  resize()
+}
+function loop(now) {
+  renderer.updateMouse(pointers.first)
+  renderer.updatePointerCount(pointers.count)
+  renderer.updatePointerCoords(pointers.coords)
+  renderer.updateMove(pointers.move)
+  renderer.render(now)
+  frm = requestAnimationFrame(loop)
+}
+function renderThis() {
+  editor.clearError()
+  store.putShaderSource(shaderId, editor.text)
+
+  const result = renderer.test(editor.text)
+
+  if (result) {
+    editor.setError(result)
+  } else {
+    renderer.updateShader(editor.text)
+  }
+  cancelAnimationFrame(frm) // Always cancel the previous frame!
+  loop(0)
+}
+const debounce = (fn, delay) => {
+  let timerId
+  return (...args) => {
+    clearTimeout(timerId)
+    timerId = setTimeout(() => fn.apply(this, args), delay)
+  }
+}
+const render = debounce(renderThis, renderDelay)
+function init() {
+  source = document.querySelector("script[type='x-shader/x-fragment']")
+
+  document.title = "See Through"
+
+  renderer = new Renderer(canvas, dpr)
+  pointers = new PointerHandler(canvas, dpr)
+  store    = new Store(window.location)
+  editor   = new Editor(codeEditor, error, indicator)
+  editor.text = source.textContent
+  renderer.setup()
+  renderer.init()
+
+  if (!editMode) {
+    btnToggleView.checked = true
+    toggleView()
+  }
+  if (resolution === .5) {
+    btnToggleResolution.checked = true
+    toggleResolution()
+  }
+  canvas.addEventListener('shader-error', e => editor.setError(e.detail))
+
+  resize()
+
+  if (renderer.test(source.textContent) === null) {
+    renderer.updateShader(source.textContent)
+  }
+  loop(0)
+  window.onresize = resize
+  window.addEventListener("keydown", e => {
+    if (e.key === "L" && e.ctrlKey) {
+      e.preventDefault()
+      btnToggleView.checked = !btnToggleView.checked
+      toggleView()
+    }
+  })
+}
+class Renderer {
+  #vertexSrc = "#version 300 es\nprecision highp float;\nin vec4 position;\nvoid main(){gl_Position=position;}"
+  #fragmtSrc = "#version 300 es\nprecision highp float;\nout vec4 O;\nuniform float time;\nuniform vec2 resolution;\nvoid main() {\n\tvec2 uv=gl_FragCoord.xy/resolution;\n\tO=vec4(uv,sin(time)*.5+.5,1);\n}"
+  #vertices = [-1, 1, -1, -1, 1, 1, 1, -1]
+  constructor(canvas, scale) {
+    this.canvas = canvas
+    this.scale = scale
+    this.gl = canvas.getContext("webgl2")
+    this.gl.viewport(0, 0, canvas.width * scale, canvas.height * scale)
+    this.shaderSource = this.#fragmtSrc
+    this.mouseMove = [0, 0]
+    this.mouseCoords = [0, 0]
+    this.pointerCoords = [0, 0]
+    this.nbrOfPointers = 0
+  }
+  get defaultSource() { return this.#fragmtSrc }
+  updateShader(source) {
+    this.reset()
+    this.shaderSource = source
+    this.setup()
+    this.init()
+  }
+  updateMove(deltas) {
+    this.mouseMove = deltas
+  }
+  updateMouse(coords) {
+    this.mouseCoords = coords
+  }
+  updatePointerCoords(coords) {
+    this.pointerCoords = coords
+  }
+  updatePointerCount(nbr) {
+    this.nbrOfPointers = nbr
+  }
+  updateScale(scale) {
+    this.scale = scale
+    this.gl.viewport(0, 0, this.canvas.width * scale, this.canvas.height * scale)
+  }
+  compile(shader, source) {
+    const gl = this.gl
+    gl.shaderSource(shader, source)
+    gl.compileShader(shader)
+
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      console.error(gl.getShaderInfoLog(shader))
+      this.canvas.dispatchEvent(new CustomEvent('shader-error', { detail: gl.getShaderInfoLog(shader) }))
+    }
+  }
+  test(source) {
+    let result = null
+    const gl = this.gl
+    const shader = gl.createShader(gl.FRAGMENT_SHADER)
+    gl.shaderSource(shader, source)
+    gl.compileShader(shader)
+
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      result = gl.getShaderInfoLog(shader)
+    }
+    if (gl.getShaderParameter(shader, gl.DELETE_STATUS)) {
+      gl.deleteShader(shader)
+    }
+    return result
+  }
+  reset() {
+    const { gl, program, vs, fs } = this
+    if (!program || gl.getProgramParameter(program, gl.DELETE_STATUS)) return
+    if (gl.getShaderParameter(vs, gl.DELETE_STATUS)) {
+      gl.detachShader(program, vs)
+      gl.deleteShader(vs)
+    }
+    if (gl.getShaderParameter(fs, gl.DELETE_STATUS)) {
+      gl.detachShader(program, fs)
+      gl.deleteShader(fs)
+    }
+    gl.deleteProgram(program)
+  }
+  createCubeMap() {
+    const { gl } = this
+    const cubeMap = gl.createTexture()
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubeMap)
+
+    const imgpath='https://assets.codepen.io/4386748'
+    const faces = [
+        [gl.TEXTURE_CUBE_MAP_POSITIVE_X, '01posx.jpg'],
+        [gl.TEXTURE_CUBE_MAP_NEGATIVE_X, '01negx.jpg'],
+        [gl.TEXTURE_CUBE_MAP_POSITIVE_Y, '01posy.jpg'],
+        [gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, '01negy.jpg'],
+        [gl.TEXTURE_CUBE_MAP_POSITIVE_Z, '01posz.jpg'],
+        [gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, '01negz.jpg'],
+    ]
+
+    for (let [target, url] of faces) {
+        const level = 0
+        const internalFormat = gl.RGBA
+        const width = 512
+        const height = 512
+        const format = gl.RGBA
+        const type = gl.UNSIGNED_BYTE
+        gl.texImage2D(target, level, internalFormat, width, height, 0, format, type, null)
+        const image = new Image()
+        image.crossOrigin = 'anonymous'
+        image.onload = () => {
+            gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubeMap)
+            gl.texImage2D(target, level, internalFormat, format, type, image)
+        }
+        image.src = `${imgpath}/${url}?width=512&height=512&format=auto`
+    }
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
+  }
+  setup() {
+    const gl = this.gl
+    this.createCubeMap()
+    this.vs = gl.createShader(gl.VERTEX_SHADER)
+    this.fs = gl.createShader(gl.FRAGMENT_SHADER)
+    this.compile(this.vs, this.#vertexSrc)
+    this.compile(this.fs, this.shaderSource)
+    this.program = gl.createProgram()
+    gl.attachShader(this.program, this.vs)
+    gl.attachShader(this.program, this.fs)
+    gl.linkProgram(this.program)
+
+    if (!gl.getProgramParameter(this.program, gl.LINK_STATUS)) {
+      console.error(gl.getProgramInfoLog(this.program))
+    }
+  }
+  init() {
+    const { gl, program } = this
+    this.buffer = gl.createBuffer()
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer)
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.#vertices), gl.STATIC_DRAW)
+
+    const position = gl.getAttribLocation(program, "position")
+
+    gl.enableVertexAttribArray(position)
+    gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0)
+
+    program.resolution = gl.getUniformLocation(program, "resolution")
+    program.time = gl.getUniformLocation(program, "time")
+    program.move = gl.getUniformLocation(program, "move")
+    program.touch = gl.getUniformLocation(program, "touch")
+    program.pointerCount = gl.getUniformLocation(program, "pointerCount")
+    program.pointers = gl.getUniformLocation(program, "pointers")
+    program.cubeMap = gl.getUniformLocation(program, "cubeMap")
+  }
+  render(now = 0) {
+    const { gl, program, buffer, canvas, mouseMove, mouseCoords, pointerCoords, nbrOfPointers } = this
+    
+    if (!program || gl.getProgramParameter(program, gl.DELETE_STATUS)) return
+
+    gl.clearColor(0, 0, 0, 1)
+    gl.clear(gl.COLOR_BUFFER_BIT)
+    gl.useProgram(program)
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
+    gl.uniform2f(program.resolution, canvas.width, canvas.height)
+    gl.uniform1f(program.time, now * 1e-3)
+    gl.uniform2f(program.move, ...mouseMove)
+    gl.uniform2f(program.touch, ...mouseCoords)
+    gl.uniform1i(program.pointerCount, nbrOfPointers)
+    gl.uniform2fv(program.pointers, pointerCoords)
+    gl.uniform1i(program.cubeMap, 0)
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+  }
+}
+class Store {
+  constructor(key) {
+    this.key = key
+    this.store = window.localStorage
+  }
+  #ownShadersKey = 'ownShaders'
+  #StorageType = Object.freeze({
+    shader: 'fragmentSource',
+    config: 'config'
+  })
+  #getKeyPrefix(type) {
+    return `${type}${btoa(this.key)}`
+  }
+  #getKey(type, name) {
+    return `${this.#getKeyPrefix(type)}${btoa(name)}`
+  }
+  putShaderSource(name, source) {
+    const storageType = this.#StorageType.shader
+    this.store.setItem(this.#getKey(storageType, name), source)
+  }
+  getShaderSource(name) {
+    const storageType = this.#StorageType.shader
+    return this.store.getItem(this.#getKey(storageType, name))
+  }
+  deleteShaderSource(name) {
+    const storageType = this.#StorageType.shader
+    this.store.removeItem(this.#getKey(storageType, name))
+  }
+  /** @returns {{title:string, uuid:string}[]} */
+  getOwnShaders() {
+    const storageType = this.#StorageType.config
+    const result = this.store.getItem(this.#getKey(storageType, this.#ownShadersKey))
+    
+    return result ? JSON.parse(result) : []
+  }
+  /** @param {{title:string, uuid:string}[]} shader */
+  putOwnShader(shader) {
+    const ownShaders = this.getOwnShaders()
+    const storageType = this.#StorageType.config
+    const index = ownShaders.findIndex((s) => s.uuid === shader.uuid)
+    if (index === -1) {
+      ownShaders.push(shader)
+    } else {
+      ownShaders[index] = shader
+    }
+    this.store.setItem(this.#getKey(storageType, this.#ownShadersKey), JSON.stringify(ownShaders))
+  }
+  deleteOwnShader(uuid) {
+    const ownShaders = this.getOwnShaders()
+    const storageType = this.#StorageType.config
+    this.store.setItem(this.#getKey(storageType, this.#ownShadersKey), JSON.stringify(ownShaders.filter((s) => s.uuid !== uuid) ))
+    this.deleteShaderSource(uuid)
+  }
+  /** @param {string[]} keep The names of the shaders to keep*/
+  cleanup(keep=[]) {
+    const storageType = this.#StorageType.shader
+    const ownShaders = this.getOwnShaders().map((s) => this.#getKey(storageType, s.uuid))
+    const premadeShaders = keep.map((name) => this.#getKey(storageType, name))
+    const keysToKeep = [...ownShaders, ...premadeShaders]
+    const result = []
+
+    for (let i = 0; i < this.store.length; i++) {
+      const key = this.store.key(i)
+
+      if (key.startsWith(this.#getKeyPrefix(this.#StorageType.shader)) && !keysToKeep.includes(key)) {
+        result.push(key)
+      }
+    }
+
+    result.forEach((key) => this.store.removeItem(key))
+  }
+}
+class PointerHandler {
+  constructor(element, scale) {
+    this.scale = scale
+    this.active = false
+    this.pointers = new Map()
+    this.lastCoords = [0,0]
+    this.moves = [0,0]
+    const map = (element, scale, x, y) => [x * scale, element.height - y * scale]
+    element.addEventListener("pointerdown", (e) => {
+      this.active = true
+      this.pointers.set(e.pointerId, map(element, this.getScale(), e.clientX, e.clientY))
+    })
+    element.addEventListener("pointerup", (e) => {
+      if (this.count === 1) {
+        this.lastCoords = this.first
+      }
+      this.pointers.delete(e.pointerId)
+      this.active = this.pointers.size > 0
+    })
+    element.addEventListener("pointerleave", (e) => {
+      if (this.count === 1) {
+        this.lastCoords = this.first
+      }
+      this.pointers.delete(e.pointerId)
+      this.active = this.pointers.size > 0
+    })
+    element.addEventListener("pointermove", (e) => {
+      if (!this.active) return
+      this.lastCoords = [e.clientX, e.clientY]
+      this.pointers.set(e.pointerId, map(element, this.getScale(), e.clientX, e.clientY))
+      this.moves = [this.moves[0]+e.movementX, this.moves[1]+e.movementY]
+    })
+  }
+  getScale() {
+    return this.scale
+  }
+  updateScale(scale) { this.scale = scale }
+  reset() {
+    this.pointers.clear()
+    this.active = false
+    this.moves = [0,0]
+  }
+  get count() {
+    return this.pointers.size
+  }
+  get move() {
+    return this.moves
+  }
+  get coords() {
+    return this.pointers.size > 0 ? Array.from(this.pointers.values()).map((p) => [...p]).flat() : [0, 0]
+  }
+  get first() {
+    return this.pointers.values().next().value || this.lastCoords
+  }
+}
+class Editor {
+  constructor(textarea, errorfield, errorindicator) {
+    this.textarea = textarea
+    this.errorfield = errorfield
+    this.errorindicator = errorindicator
+    textarea.addEventListener('keydown', this.handleKeydown.bind(this))
+    textarea.addEventListener('scroll', this.handleScroll.bind(this))
+  }
+  get hidden() { return this.textarea.classList.contains('hidden') }
+  set hidden(value) { value ? this.#hide() : this.#show() }
+  #hide() { this.textarea.classList.add('hidden') }
+  #show() { this.textarea.classList.remove('hidden') }
+  get text() { return this.textarea.value }
+  set text(value) { this.textarea.value = value }
+  get scrollTop() { return this.textarea.scrollTop }
+  set scrollTop(value) { this.textarea.scrollTop = value }
+  setError(message) {
+    this.errorfield.innerHTML = message
+    this.errorfield.classList.add('opaque')
+    const match = message.match(/ERROR: \d+:(\d+):/)
+    const lineNumber = match ? parseInt(match[1]) : 0
+    const overlay = document.createElement('pre')
+
+    overlay.classList.add('overlay')
+    overlay.textContent = '\n'.repeat(lineNumber)
+
+    document.body.appendChild(overlay)
+
+    const offsetTop = parseInt(getComputedStyle(overlay).height)
+
+    this.errorindicator.style.setProperty('--top', offsetTop + 'px')
+    this.errorindicator.style.visibility = 'visible'
+
+    document.bo
+dy.removeChild(overlay)
+    }
+    clearError() {
+        this.errorfield.innerHTML = ''
+        this.errorfield.classList.remove('opaque')
+        this.errorindicator.style.visibility = 'hidden'
+    }
+    handleKeydown(e) {
+        if (e.key === 'Tab') {
+        e.preventDefault()
+        const start = this.textarea.selectionStart
+        const end = this.textarea.selectionEnd
+        this.textarea.value = this.textarea.value.substring(0, start) + '\t' + this.textarea.value.substring(end)
+        this.textarea.selectionStart = this.textarea.selectionEnd = start + 1
+        }
+    }
+    handleScroll(e) {
+        this.errorindicator.style.setProperty('--scroll-top', this.textarea.scrollTop + 'px')
+    }
+    }
+        </script>
