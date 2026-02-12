@@ -6,26 +6,29 @@ weatherForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const city = cityInput.value.trim();
 
-  if (city) {
-    try {
-      const weatherData = await getWeatherData(city);
-      displayWeatherInfo(weatherData);
-    } catch (error) {
-      console.error(error);
-      displayError("Could not fetch weather data");
-    }
+  if (!city) return;
+
+  try {
+    const weatherData = await getWeatherData(city);
+    displayWeatherInfo(weatherData);
+  } catch (error) {
+    console.error(error);
+    displayError("Could not fetch weather data");
   }
 });
 
 async function getWeatherData(city) {
-  // Now calling YOUR backend instead of OpenWeather directly
-  const response = await fetch(`/api/weather?city=${city}`);
+  const response = await fetch(`/api/weather?city=${city}`, {
+    cache: "no-store",
+  });
+
+  const data = await response.json();
 
   if (!response.ok) {
-    throw new Error("Could not fetch weather data");
+    throw new Error(data.message || "Could not fetch weather data");
   }
 
-  return await response.json();
+  return data;
 }
 
 function displayWeatherInfo(data) {
